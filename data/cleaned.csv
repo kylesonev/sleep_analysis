@@ -1,4 +1,4 @@
-data,dia_semana,pontuacao,regularidade,duracao,sono_leve,%Sono_leve,sono_profundo,%Sono_profundo,REM,%REM,tempo_acordado,vezes_acordado
+data,dia_semana,pontuacao,regularidade,duracao,sono_leve,sono_leve_perc,sono_profundo,sono_profundo_perc,REM,REM_perc,tempo_acordado,vezes_acordado
 2025-05-01,quinta-feira,72,90,478,337,70.5,39,8.16,102,21.34,6,3
 2025-05-02,sexta-feira,93,90,464,314,67.67,80,17.24,70,15.09,6,1
 2025-05-03,sábado,80,90,539,360,66.79,83,15.4,96,17.81,12,4
