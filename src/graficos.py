@@ -45,3 +45,89 @@ def criar_boxplot(
     plt.tight_layout()
     plt.show()
     return fig, axes
+
+
+def criar_scatterplot_outliers(outliers: list, dataframe: pd.DataFrame):
+    for outlier in outliers:
+        Q1 = dataframe[outlier].quantile(0.25)
+        Q3 = dataframe[outlier].quantile(0.75)
+        IQR = Q3 - Q1
+        limite_inferior = Q1 - 1.5 * IQR
+        limite_superior = Q3 + 1.5 * IQR
+
+        outliers_mask = (dataframe[outlier] < limite_inferior) | (
+            dataframe[outlier] > limite_superior
+        )
+        outliers_df = dataframe[outliers_mask].copy()
+        non_outliers_df = dataframe[~outliers_mask].copy()
+
+        print(f"\nAnálise de Outliers - {outlier}")
+        print(f"• Primeiro Quartil (Q1): {Q1:.2f}")
+        print(f"• Terceiro Quartil (Q3): {Q3:.2f}")
+        print(f"• IQR: {IQR:.2f}")
+        print(f"• Limite Inferior: {limite_inferior:.2f}")
+        print(f"• Limite Superior: {limite_superior:.2f}")
+        print(f"• Outliers Detected: {len(outliers_df)}")
+
+        plt.figure(figsize=(12, 6))
+
+        media = dataframe[outlier].mean()
+
+        sns.scatterplot(
+            x=non_outliers_df.index,
+            y=non_outliers_df[outlier],
+            color="skyblue",
+            label="Normal",
+            s=80,
+        )
+        sns.scatterplot(
+            x=outliers_df.index,
+            y=outliers_df[outlier],
+            color="red",
+            label="Outliers",
+            s=100,
+        )
+        plt.axhline(limite_superior, color="red", linestyle="--")
+        plt.axhline(limite_inferior, color="red", linestyle="--")
+        plt.axhline(media, color="green", linestyle="--")
+
+        plt.title(f"Distribuição de {outlier.capitalize()} com Outliers em destaque")
+        plt.xlabel("Index")
+        plt.ylabel(outlier)
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
+
+def criar_barplot_stacked(
+    dataframe: pd.DataFrame, composicao_sono: list, colormap: str = "viridis"
+):
+    volume = dataframe.groupby("data")[composicao_sono].sum()
+
+    ax = volume.plot(
+        kind="bar",
+        stacked=True,
+        figsize=(20, 10),
+        colormap=colormap,
+    )
+    plt.title("Composição do Sono")
+    plt.xlabel("Dia")
+    plt.ylabel("Tempo (min)")
+    plt.legend(title="Etapas")
+
+    plt.tight_layout()
+    plt.show()
+
+
+def criar_pieplot(dataframe: pd.DataFrame, values: list, labels: list):
+    plt.figure(figsize=(16, 8))
+    plt.pie(
+        values,
+        labels=labels,
+        autopct="%1.2f%%",
+        startangle=90,
+    )
+    plt.title("Composição Total do Sono Registrado")
+    plt.axis("equal")
+    plt.tight_layout()
+    plt.show()
