@@ -2,6 +2,7 @@ import math
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 
 def criar_boxplot(
@@ -129,5 +130,67 @@ def criar_pieplot(dataframe: pd.DataFrame, values: list, labels: list):
     )
     plt.title("Composição Total do Sono Registrado")
     plt.axis("equal")
+    plt.tight_layout()
+    plt.show()
+
+
+def imprimir_medias(dataframe: pd.DataFrame):
+    print("Média das Maiores 15 Pontuações registradas")
+    print("-------------------------------------------")
+    print(f"Pontuação: {dataframe['pontuacao']}")
+    print(f"Duração: {dataframe['duracao']}")
+    print(f"Sono Leve %: {dataframe['sono_leve_perc']}")
+    print(f"Sono Profundo %: {dataframe['sono_profundo_perc']}")
+    print(f"REM %: {dataframe['REM_perc']}")
+    print(f"Tempo acordado: {dataframe['tempo_acordado']}")
+    print(f"Vezes acordado: {dataframe['vezes_acordado']}")
+
+
+def imprimir_diferenca_medias(
+    media_maiores_df: pd.DataFrame, media_menores_df: pd.DataFrame
+):
+    print("Diferença entre as Maiores e Menores")
+    print("--------------------------------")
+    print(
+        f"Pontuação: {media_maiores_df['pontuacao'] - media_menores_df['pontuacao']:.2f}"
+    )
+    print(f"Duração: {media_maiores_df['duracao'] - media_menores_df['duracao']:.2f}")
+    print(
+        f"Sono Leve (%): {media_maiores_df['sono_leve_perc'] - media_menores_df['sono_leve_perc']:.2f}"
+    )
+    print(
+        f"Sono Profundo (%): {media_maiores_df['sono_profundo_perc'] - media_menores_df['sono_profundo_perc']:.2f}"
+    )
+    print(f"REM (%): {media_maiores_df['REM_perc'] - media_menores_df['REM_perc']:.2f}")
+    print(
+        f"Tempo acordado: {media_maiores_df['tempo_acordado'] - media_menores_df['tempo_acordado']:.2f}"
+    )
+    print(
+        f"Vezes acordado: {media_maiores_df['vezes_acordado'] - media_menores_df['vezes_acordado']:.2f}"
+    )
+    print("--------------------------------")
+
+
+def criar_side_by_side(maior_pontuacao: pd.Series, menor_pontuacao: pd.Series):
+    categorias = maior_pontuacao.index.tolist()
+    maior_vals = maior_pontuacao.values
+    menor_vals = menor_pontuacao.values
+
+    x = np.arange(len(categorias))
+    width = 0.35
+
+    fig, ax = plt.subplots(figsize=(15, 8))
+    bars1 = ax.bar(x - width / 2, maior_vals, width, label="Melhor", color="skyblue")
+    bars2 = ax.bar(x + width / 2, menor_vals, width, label="Pior", color="lightcoral")
+
+    ax.set_ylabel("Valores Médios")
+    ax.set_title("Comparação de Métricas de Sono: Melhor dia vs. Pior dia")
+    ax.set_xticks(x)
+    ax.set_xticklabels(categorias, rotation=45, ha="right")
+    ax.legend()
+
+    ax.bar_label(bars1, padding=3, fmt="%.2f")
+    ax.bar_label(bars2, padding=3, fmt="%.2f")
+
     plt.tight_layout()
     plt.show()
