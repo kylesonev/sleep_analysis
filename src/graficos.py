@@ -155,22 +155,21 @@ def criar_pieplot(dataframe: pd.DataFrame, values: list, labels: list):
     plt.show()
 
 
-def criar_side_by_side(maior_pontuacao: pd.Series, menor_pontuacao: pd.Series):
-    categorias = maior_pontuacao.index.tolist()
-    maior_vals = maior_pontuacao.values
-    menor_vals = menor_pontuacao.values
+def criar_side_by_side(alto: pd.Series, baixo: pd.Series, categorias: list, title: str):
+    rotulos = categorias
+    maior_vals = alto.values
+    menor_vals = baixo.values
 
-    x = np.arange(len(categorias))
+    x = np.arange(len(rotulos))
     width = 0.35
 
     fig, ax = plt.subplots(figsize=(15, 8))
-    bars1 = ax.bar(x - width / 2, maior_vals, width, label="Melhor", color="skyblue")
-    bars2 = ax.bar(x + width / 2, menor_vals, width, label="Pior", color="lightcoral")
+    bars1 = ax.bar(x - width / 2, maior_vals, width, label="Maior", color="skyblue")
+    bars2 = ax.bar(x + width / 2, menor_vals, width, label="Menor", color="lightcoral")
 
-    ax.set_ylabel("Valores Médios")
-    ax.set_title("Comparação de Métricas de Sono: Melhor dia vs. Pior dia")
+    ax.set_title(title)
     ax.set_xticks(x)
-    ax.set_xticklabels(categorias, rotation=45, ha="right")
+    ax.set_xticklabels(rotulos, rotation=45, ha="right")
     ax.legend()
 
     ax.bar_label(bars1, padding=3, fmt="%.2f")
