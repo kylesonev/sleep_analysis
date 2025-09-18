@@ -5,14 +5,7 @@ import seaborn as sns
 import numpy as np
 
 
-def criar_boxplot(
-    dataframe: pd.DataFrame,
-    metricas: list,
-    nrows: int = None,
-    ncols: int = 4,
-    figsize: tuple = (15, 10),
-    color: str = "skyblue",
-) -> tuple:
+def validar_metricas(dataframe: pd.DataFrame, metricas: list):
     # Validação
     for metrica in metricas:
         if metrica not in dataframe.columns:
@@ -20,6 +13,8 @@ def criar_boxplot(
         if not pd.api.types.is_numeric_dtype(dataframe[metrica]):
             raise ValueError(f"A coluna {metrica} não é numérica")
 
+
+def calcular_linhas(metricas: list, ncols: int, nrows=None):
     # Calcular número de linhas se não especificado
     if nrows is None:
         nrows = math.ceil(len(metricas) / ncols)
@@ -28,9 +23,32 @@ def criar_boxplot(
             f"Número de métricas ({len(metricas)} excede o tamanho da grade ({nrows * ncols})"
         )
 
+
+def criar_figura(nrows, ncols, figsize):
     # Criar figura
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
     axes = axes.flatten() if nrows * ncols > 1 else [axes]
+
+    return fig, axes
+
+
+def remover_axes_vazio(metricas, fig, axes):
+    # Remover eixos não usados
+    for j in range(len(metricas), len(axes)):
+        fig.delaxes(axes[j])
+
+
+def criar_boxplot(
+    dataframe: pd.DataFrame,
+    metricas: list,
+    nrows: int = 3,
+    ncols: int = 4,
+    figsize: tuple = (15, 10),
+    color: str = "skyblue",
+) -> tuple:
+    validar_metricas(dataframe, metricas)
+    calcular_linhas(metricas, ncols, nrows)
+    fig, axes = criar_figura(nrows, ncols, figsize)
 
     # Criar boxplots
     for i, metrica in enumerate(metricas):
@@ -39,17 +57,27 @@ def criar_boxplot(
         ax.set_title(metrica)
         ax.set_xlabel("")
 
-    # Remover eixos não usados
-    for j in range(len(metricas), len(axes)):
-        fig.delaxes(axes[j])
-
+    remover_axes_vazio(metricas, fig, axes)
     plt.tight_layout()
     plt.show()
-    return fig, axes
 
 
-def criar_scatterplot_outliers(outliers: list, dataframe: pd.DataFrame):
-    for outlier in outliers:
+def criar_scatterplot_outliers(
+    outliers: list,
+    dataframe: pd.DataFrame,
+    nrows: int = None,
+    ncols: int = 4,
+    figsize: tuple = (15, 10),
+):
+    validar_metricas(dataframe=dataframe, metricas=outliers)
+    calcular_linhas(outliers, ncols, nrows)
+    fig, axes = criar_figura(nrows, ncols, figsize)
+
+    # Criar boxplots
+    for i, outlier in enumerate(outliers):
+        ax = axes[i]
+        ax.set_title(f"{outlier.capitalize()}")
+
         Q1 = dataframe[outlier].quantile(0.25)
         Q3 = dataframe[outlier].quantile(0.75)
         IQR = Q3 - Q1
@@ -62,16 +90,6 @@ def criar_scatterplot_outliers(outliers: list, dataframe: pd.DataFrame):
         outliers_df = dataframe[outliers_mask].copy()
         non_outliers_df = dataframe[~outliers_mask].copy()
 
-        print(f"\nAnálise de Outliers - {outlier}")
-        print(f"• Primeiro Quartil (Q1): {Q1:.2f}")
-        print(f"• Terceiro Quartil (Q3): {Q3:.2f}")
-        print(f"• IQR: {IQR:.2f}")
-        print(f"• Limite Inferior: {limite_inferior:.2f}")
-        print(f"• Limite Superior: {limite_superior:.2f}")
-        print(f"• Outliers Detected: {len(outliers_df)}")
-
-        plt.figure(figsize=(12, 6))
-
         media = dataframe[outlier].mean()
 
         sns.scatterplot(
@@ -80,6 +98,7 @@ def criar_scatterplot_outliers(outliers: list, dataframe: pd.DataFrame):
             color="skyblue",
             label="Normal",
             s=80,
+            ax=ax,
         )
         sns.scatterplot(
             x=outliers_df.index,
@@ -87,17 +106,19 @@ def criar_scatterplot_outliers(outliers: list, dataframe: pd.DataFrame):
             color="red",
             label="Outliers",
             s=100,
+            ax=ax,
         )
-        plt.axhline(limite_superior, color="red", linestyle="--")
-        plt.axhline(limite_inferior, color="red", linestyle="--")
-        plt.axhline(media, color="green", linestyle="--")
+        ax.axhline(limite_superior, color="red", linestyle="--")
+        ax.axhline(limite_inferior, color="red", linestyle="--")
+        ax.axhline(media, color="green", linestyle="--")
 
-        plt.title(f"Distribuição de {outlier.capitalize()} com Outliers em destaque")
-        plt.xlabel("Index")
-        plt.ylabel(outlier)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+        ax.set_xlabel("Index")
+
+    remover_axes_vazio(outliers, fig, axes)
+    plt.tight_layout()
+    plt.show()
+
+    return fig, axes
 
 
 def criar_barplot_stacked(
@@ -105,7 +126,7 @@ def criar_barplot_stacked(
 ):
     volume = dataframe.groupby("data")[composicao_sono].sum()
 
-    ax = volume.plot(
+    volume.plot(
         kind="bar",
         stacked=True,
         figsize=(20, 10),
@@ -134,43 +155,6 @@ def criar_pieplot(dataframe: pd.DataFrame, values: list, labels: list):
     plt.show()
 
 
-def imprimir_medias(dataframe: pd.DataFrame):
-    print("Média das Maiores 15 Pontuações registradas")
-    print("-------------------------------------------")
-    print(f"Pontuação: {dataframe['pontuacao']}")
-    print(f"Duração: {dataframe['duracao']}")
-    print(f"Sono Leve %: {dataframe['sono_leve_perc']}")
-    print(f"Sono Profundo %: {dataframe['sono_profundo_perc']}")
-    print(f"REM %: {dataframe['REM_perc']}")
-    print(f"Tempo acordado: {dataframe['tempo_acordado']}")
-    print(f"Vezes acordado: {dataframe['vezes_acordado']}")
-
-
-def imprimir_diferenca_medias(
-    media_maiores_df: pd.DataFrame, media_menores_df: pd.DataFrame
-):
-    print("Diferença entre as Maiores e Menores")
-    print("--------------------------------")
-    print(
-        f"Pontuação: {media_maiores_df['pontuacao'] - media_menores_df['pontuacao']:.2f}"
-    )
-    print(f"Duração: {media_maiores_df['duracao'] - media_menores_df['duracao']:.2f}")
-    print(
-        f"Sono Leve (%): {media_maiores_df['sono_leve_perc'] - media_menores_df['sono_leve_perc']:.2f}"
-    )
-    print(
-        f"Sono Profundo (%): {media_maiores_df['sono_profundo_perc'] - media_menores_df['sono_profundo_perc']:.2f}"
-    )
-    print(f"REM (%): {media_maiores_df['REM_perc'] - media_menores_df['REM_perc']:.2f}")
-    print(
-        f"Tempo acordado: {media_maiores_df['tempo_acordado'] - media_menores_df['tempo_acordado']:.2f}"
-    )
-    print(
-        f"Vezes acordado: {media_maiores_df['vezes_acordado'] - media_menores_df['vezes_acordado']:.2f}"
-    )
-    print("--------------------------------")
-
-
 def criar_side_by_side(maior_pontuacao: pd.Series, menor_pontuacao: pd.Series):
     categorias = maior_pontuacao.index.tolist()
     maior_vals = maior_pontuacao.values
@@ -191,6 +175,27 @@ def criar_side_by_side(maior_pontuacao: pd.Series, menor_pontuacao: pd.Series):
 
     ax.bar_label(bars1, padding=3, fmt="%.2f")
     ax.bar_label(bars2, padding=3, fmt="%.2f")
+
+    plt.tight_layout()
+    plt.show()
+
+
+def criar_histograma(
+    dataframe: pd.DataFrame,
+    metricas: list,
+    nrows: int = None,
+    ncols: int = 4,
+    figsize: tuple = (15, 10),
+):
+    validar_metricas(dataframe, metricas)
+    calcular_linhas(metricas, ncols, nrows)
+    fig, axes = criar_figura(nrows, ncols, figsize)
+
+    for i, metrica in enumerate(metricas):
+        ax = axes[i]
+        sns.histplot(data=dataframe, x=metrica, kde=True, ax=ax)
+
+    remover_axes_vazio(metricas, fig, axes)
 
     plt.tight_layout()
     plt.show()
