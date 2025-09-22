@@ -21,14 +21,16 @@ def imprimir_diferenca_medias(
     print(
         f"Pontuação: {media_maiores_df['pontuacao'] - media_menores_df['pontuacao']:.2f}"
     )
-    print(f"Duração: {media_maiores_df['duracao'] - media_menores_df['duracao']:.2f}")
+    print(
+        f"Duração: {media_maiores_df['duracao'] - media_menores_df['duracao']:.2f}")
     print(
         f"Sono Leve (%): {media_maiores_df['sono_leve_perc'] - media_menores_df['sono_leve_perc']:.2f}"
     )
     print(
         f"Sono Profundo (%): {media_maiores_df['sono_profundo_perc'] - media_menores_df['sono_profundo_perc']:.2f}"
     )
-    print(f"REM (%): {media_maiores_df['REM_perc'] - media_menores_df['REM_perc']:.2f}")
+    print(
+        f"REM (%): {media_maiores_df['REM_perc'] - media_menores_df['REM_perc']:.2f}")
     print(
         f"Tempo acordado: {media_maiores_df['tempo_acordado'] - media_menores_df['tempo_acordado']:.2f}"
     )
