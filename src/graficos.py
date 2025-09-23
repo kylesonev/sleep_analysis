@@ -62,6 +62,31 @@ def criar_boxplot(
     plt.show()
 
 
+def criar_scatterplot_pontuacao(
+    dataframe: pd.DataFrame,
+    metricas: list,
+    nrows: int = 3,
+    ncols: int = 4,
+    figsize: tuple = (15, 10),
+    color: str = "skyblue",
+) -> tuple:
+    validar_metricas(dataframe, metricas)
+    calcular_linhas(metricas, ncols, nrows)
+    fig, axes = criar_figura(nrows, ncols, figsize)
+    # Criar boxplots
+    for i, metrica in enumerate(metricas):
+        ax = axes[i]
+        sns.scatterplot(
+            x=dataframe[metrica], y=dataframe["pontuacao"], ax=ax, color=color
+        )
+        ax.set_title(metrica)
+        ax.set_xlabel("")
+
+    remover_axes_vazio(metricas, fig, axes)
+    plt.tight_layout()
+    plt.show()
+
+
 def criar_scatterplot_outliers(
     outliers: list,
     dataframe: pd.DataFrame,
@@ -164,8 +189,10 @@ def criar_side_by_side(alto: pd.Series, baixo: pd.Series, categorias: list, titl
     width = 0.35
 
     fig, ax = plt.subplots(figsize=(15, 8))
-    bars1 = ax.bar(x - width / 2, maior_vals, width, label="Maior", color="skyblue")
-    bars2 = ax.bar(x + width / 2, menor_vals, width, label="Menor", color="lightcoral")
+    bars1 = ax.bar(x - width / 2, maior_vals, width,
+                   label="Maior", color="skyblue")
+    bars2 = ax.bar(x + width / 2, menor_vals, width,
+                   label="Menor", color="lightcoral")
 
     ax.set_title(title)
     ax.set_xticks(x)
