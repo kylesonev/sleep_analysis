@@ -1,29 +1,33 @@
 # Sleep Analysis 💤
 
-Neste projeto eu estou utilizando uma base de dados pessoal, onde por meio da utilização de um **SmartWatch** (Amazfit GTS 2 Mini), eu coletei informações das minhas noites de sono. 
+Este projeto tem como objetivo analisar dados pessoais de sono coletados com um **SmartWatch Amazfit GTS 2 Mini**.  
+Foram registradas **73 noites de sono**, no período de *01/05/2025 a 12/07/2025*.  
 
-Ao todo foi realizada a coleta de **73 noites** de sono, no período de *01/05/2025 a 12/07/2025*.
+> O objetivo inicial era 90 noites, mas o relógio quebrou no meio do caminho. 😅
 
-Meu objetivo inicial era realizar a coleta de **90 noites**, porém, meu SmartWatch decidiu quebrar... 😔
+---
 
-### Métricas coletadas
+## Objetivos
+- Coleta e organização dos dados de sono.
+- Análise Exploratória (EDA) das principais métricas.
+- Modelagem e extração de insights.
+
+---
+
+## Principais Métricas
 - **Data**
-- **Regularidade**
-- **Pontuação**
-- **Sono Leve**
-- **Sono Profundo**
-- **REM**
-- **Tempo Acordado**
-- **Vezes Acordado**
+- **Pontuação do sono** (0–100)  
+- **Regularidade** (% de consistência nos horários de dormir/acordar)  
+- **Duração total** (horas dormidas)  
+- **Estágios do sono**  
+  - Sono Leve  
+  - Sono Profundo  
+  - REM  
+- **Tempo acordado e despertares**  
 
+Descrições completas das métricas estão em [`docs/metricas.md`](./docs/metricas.md).
 
-### Etapas do projeto:
-- Pré-processamento
-- Análise Exploratória 
-- Modelagem
+---
 
-
-### Em desenvolvimento:
-
-- Adicionar descrições/comentários nos notebooks
-- Desenvolver modelagem
+## Status
+- Em desenvolvimento — adicionando descrições e comentários nos notebooks.
