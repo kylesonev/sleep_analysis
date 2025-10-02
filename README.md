@@ -1,9 +1,9 @@
-# Sleep Analysis 💤
+# Sleep Analysis 
 
 Este projeto tem como objetivo analisar dados pessoais de sono coletados com um **SmartWatch Amazfit GTS 2 Mini**.  
 Foram registradas **73 noites de sono**, no período de *01/05/2025 a 12/07/2025*.  
 
-> O objetivo inicial era 90 noites, mas o relógio quebrou no meio do caminho. 😅
+> O objetivo inicial era realizar a coleta de  90 noites, mas o relógio quebrou no meio do caminho. 😅
 
 ---
 
@@ -31,3 +31,7 @@ Descrições completas das métricas estão em [`docs/metricas.md`](./docs/metri
 
 ## Status
 - Em desenvolvimento — adicionando descrições e comentários nos notebooks.
+
+## Projeto Futuro
+Como esse foi meu primeiro projeto, estou coletando novos dados a partir de um novo smartwatch. 
+Assim que obtiver um número maior de dados iniciarei um novo projeto aprimorando tudo o que desenvolvi nesse.
